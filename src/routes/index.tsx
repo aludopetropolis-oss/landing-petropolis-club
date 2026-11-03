@@ -34,11 +34,11 @@ function Index() {
     <main className="relative min-h-dvh overflow-clip bg-background">
       {/* decor */}
       <div className="pointer-events-none absolute -right-24 -top-20 h-72 w-72 rounded-full bg-secondary" />
-      <svg className="pointer-events-none absolute -bottom-10 -left-10 h-64 w-[28rem] text-primary" viewBox="0 0 400 200" aria-hidden>
+      <svg className="pointer-events-none absolute -bottom-14 -left-14 h-40 w-[22rem] text-primary sm:-bottom-10 sm:-left-10 sm:h-64 sm:w-[28rem]" viewBox="0 0 400 200" aria-hidden>
         <path d="M0 40 C 120 0, 180 120, 400 200 L 0 200 Z" fill="currentColor" />
       </svg>
 
-      <div className="relative mx-auto flex min-h-dvh max-w-xl flex-col px-5 pt-4 sm:px-6 sm:pt-6">
+      <div className="relative mx-auto flex min-h-dvh max-w-xl flex-col px-5 pb-2 pt-4 sm:px-6 sm:pt-6">
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <img src={logo.url} alt="Petropolis Club" width={72} height={72} className="h-11 w-11 shrink-0 floaty sm:h-16 sm:w-16" fetchPriority="high" />
