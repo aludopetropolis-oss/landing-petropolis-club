@@ -6,9 +6,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Petropolis Club | Planes de recreación para tu perrito" },
-      { name: "description", content: "Planes de recreación, colegio y hospedaje para tu perrito desde $449.000 al mes. Verifica cobertura de ruta." },
+      { name: "description", content: "Planes de recreación, colegio y hospedaje para tu perrito desde $358.000 al mes. Verifica cobertura de ruta." },
       { property: "og:title", content: "Petropolis Club | Planes para tu perrito" },
-      { property: "og:description", content: "Planes desde $449.000/mes. Pregunta por cupos y cobertura de ruta." },
+      { property: "og:description", content: "Planes desde $358.000/mes. Pregunta por cupos y cobertura de ruta." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -66,12 +66,12 @@ function Index() {
 
               <div className="mt-6 inline-block rounded-3xl bg-paper px-6 py-4 shadow-sm">
                 <p className="text-sm font-bold text-ink">
-                  Antes <span className="text-muted-foreground line-through decoration-primary decoration-2">$599.000</span>
-                  <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">Ahorra 25%</span>
+                  Antes <span className="text-muted-foreground line-through decoration-primary decoration-2">$449.000</span>
+                  <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">Ahorra 20%</span>
                 </p>
                 <p className="mt-1 font-bold text-ink">Planes desde</p>
                 <p className="flex items-end gap-2">
-                  <span className="text-5xl font-black text-primary sm:text-6xl">$449.000</span>
+                  <span className="text-5xl font-black text-primary sm:text-6xl">$358.000</span>
                   <span className="mb-2 text-sm font-bold text-ink">/ mensual</span>
                 </p>
               </div>
