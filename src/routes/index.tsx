@@ -20,7 +20,7 @@ const WA_NUMBER = "573503818555";
 type Step = 0 | 1 | 2 | 3;
 
 const CTA_BAR =
-  "sticky bottom-0 z-20 -mx-5 mt-auto bg-background/85 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:mx-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-0 sm:backdrop-blur-none";
+  "sticky bottom-0 z-20 -mx-5 bg-background/85 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:mx-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-0 sm:backdrop-blur-none";
 
 function Index() {
   const [step, setStep] = useState<Step>(0);
@@ -91,7 +91,7 @@ function Index() {
               </div>
               <p className="mt-2 text-[13px] text-muted-foreground sm:mt-5 sm:text-sm">⭐ Más de 200 familias confían en nosotros</p>
 
-              <div className={CTA_BAR + " flex flex-col gap-2"}>
+              <div className={CTA_BAR + " mt-auto flex flex-col gap-2"}>
                 <button onClick={() => setStep(1)} className="pulse-cta flex w-full items-center justify-between gap-4 rounded-full bg-primary px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5 sm:text-lg">
                   Pregunta por nuestros planes <span aria-hidden>→</span>
                 </button>
@@ -100,16 +100,23 @@ function Index() {
           )}
 
           {step === 1 && (
-            <Question title="¿Cuál es el nombre de tu peludito?" emoji="🐶">
+            <Question
+              title="¿Cuál es el nombre de tu peludito?"
+              emoji="🐶"
+              cta={<Nav onBack={() => setStep(0)} onNext={() => setStep(2)} disabled={!name.trim()} />}
+            >
               <input autoFocus value={name} maxLength={40} onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && name.trim() && setStep(2)}
                 placeholder="Ej: Max" className="w-full rounded-2xl border-2 border-input bg-card px-4 py-3 text-lg font-semibold outline-none transition focus:border-primary sm:px-5 sm:py-4 sm:text-xl" />
-              <Nav onBack={() => setStep(0)} onNext={() => setStep(2)} disabled={!name.trim()} />
             </Question>
           )}
 
           {step === 2 && (
-            <Question title={`¿Cuántos días a la semana estás interesado en dejarnos a ${name.trim() || "tu peludito"}?`} emoji="📅">
+            <Question
+              title={`¿Cuántos días a la semana estás interesado en dejarnos a ${name.trim() || "tu peludito"}?`}
+              emoji="📅"
+              cta={<Nav onBack={() => setStep(1)} onNext={() => setStep(3)} />}
+            >
               <div className="rounded-3xl bg-card p-4 shadow-sm sm:p-6">
                 <p className="text-center text-5xl font-black text-primary sm:text-6xl">{days}<span className="ml-2 text-lg text-ink sm:text-xl">{days === 1 ? "día" : "días"}</span></p>
                 <input type="range" min={1} max={5} step={1} value={days} onChange={(e) => setDays(Number(e.target.value))} className="range-brand mt-4 w-full sm:mt-6" aria-label="Días a la semana" />
@@ -117,22 +124,27 @@ function Index() {
                   {[1, 2, 3, 4, 5].map((d) => <span key={d}>{d}</span>)}
                 </div>
               </div>
-              <Nav onBack={() => setStep(1)} onNext={() => setStep(3)} />
             </Question>
           )}
 
           {step === 3 && (
-            <Question title="¿Cuál es tu dirección?" emoji="📍" subtitle="La usamos para verificar la cobertura de nuestra ruta.">
+            <Question
+              title="¿Cuál es tu dirección?"
+              emoji="📍"
+              subtitle="La usamos para verificar la cobertura de nuestra ruta."
+              cta={
+                <div className={CTA_BAR + " flex flex-col gap-2"}>
+                  <button disabled={address.trim().length < 5} onClick={sendWa}
+                    className="pulse-cta flex w-full items-center justify-center gap-3 rounded-full bg-whatsapp px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:animate-none disabled:opacity-40 sm:px-8 sm:py-5 sm:text-lg">
+                    <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z" /></svg>
+                    Verificar cobertura por WhatsApp
+                  </button>
+                  <button onClick={() => setStep(2)} className="w-full text-sm font-semibold text-muted-foreground">← Atrás</button>
+                </div>
+              }
+            >
               <input autoFocus value={address} maxLength={150} onChange={(e) => setAddress(e.target.value)}
                 placeholder="Ej: Calle 123 #45-67, barrio" className="w-full rounded-2xl border-2 border-input bg-card px-4 py-3 text-base font-semibold outline-none transition focus:border-primary sm:px-5 sm:py-4 sm:text-lg" />
-              <div className={CTA_BAR + " flex flex-col gap-2"}>
-                <button disabled={address.trim().length < 5} onClick={sendWa}
-                  className="pulse-cta flex w-full items-center justify-center gap-3 rounded-full bg-whatsapp px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:animate-none disabled:opacity-40 sm:px-8 sm:py-5 sm:text-lg">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z" /></svg>
-                  Verificar cobertura por WhatsApp
-                </button>
-                <button onClick={() => setStep(2)} className="w-full text-sm font-semibold text-muted-foreground">← Atrás</button>
-              </div>
             </Question>
           )}
         </div>
@@ -141,13 +153,16 @@ function Index() {
   );
 }
 
-function Question({ title, emoji, subtitle, children }: { title: string; emoji: string; subtitle?: string; children: React.ReactNode }) {
+function Question({ title, emoji, subtitle, children, cta }: { title: string; emoji: string; subtitle?: string; children: React.ReactNode; cta?: React.ReactNode }) {
   return (
     <section className="flex flex-1 flex-col">
-      <span className="text-4xl sm:text-5xl">{emoji}</span>
-      <h2 className="mt-3 text-[1.7rem] font-black leading-tight text-ink sm:mt-4 sm:text-4xl">{title}</h2>
-      {subtitle && <p className="mt-2 text-sm text-muted-foreground sm:text-base">{subtitle}</p>}
-      <div className="mt-5 flex flex-1 flex-col sm:mt-8">{children}</div>
+      <div className="my-auto">
+        <span className="text-4xl sm:text-5xl">{emoji}</span>
+        <h2 className="mt-3 text-[1.7rem] font-black leading-tight text-ink sm:mt-4 sm:text-4xl">{title}</h2>
+        {subtitle && <p className="mt-2 text-sm text-muted-foreground sm:text-base">{subtitle}</p>}
+        <div className="mt-5 sm:mt-8">{children}</div>
+      </div>
+      {cta}
     </section>
   );
 }
