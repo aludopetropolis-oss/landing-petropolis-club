@@ -91,7 +91,7 @@ function Index() {
               </div>
               <p className="mt-2 text-[13px] text-muted-foreground sm:mt-5 sm:text-sm">⭐ Más de 200 familias confían en nosotros</p>
 
-              <div className={CTA_BAR}>
+              <div className={CTA_BAR + " flex flex-col gap-2"}>
                 <button onClick={() => setStep(1)} className="pulse-cta flex w-full items-center justify-between gap-4 rounded-full bg-primary px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5 sm:text-lg">
                   Pregunta por nuestros planes <span aria-hidden>→</span>
                 </button>
@@ -125,7 +125,7 @@ function Index() {
             <Question title="¿Cuál es tu dirección?" emoji="📍" subtitle="La usamos para verificar la cobertura de nuestra ruta.">
               <input autoFocus value={address} maxLength={150} onChange={(e) => setAddress(e.target.value)}
                 placeholder="Ej: Calle 123 #45-67, barrio" className="w-full rounded-2xl border-2 border-input bg-card px-4 py-3 text-base font-semibold outline-none transition focus:border-primary sm:px-5 sm:py-4 sm:text-lg" />
-              <div className={CTA_BAR}>
+              <div className={CTA_BAR + " flex flex-col gap-2"}>
                 <button disabled={address.trim().length < 5} onClick={sendWa}
                   className="pulse-cta flex w-full items-center justify-center gap-3 rounded-full bg-whatsapp px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:animate-none disabled:opacity-40 sm:px-8 sm:py-5 sm:text-lg">
                   <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z" /></svg>
@@ -154,7 +154,7 @@ function Question({ title, emoji, subtitle, children }: { title: string; emoji: 
 
 function Nav({ onBack, onNext, disabled }: { onBack: () => void; onNext: () => void; disabled?: boolean }) {
   return (
-    <div className={CTA_BAR + " flex-row items-center justify-between gap-4"}>
+    <div className={CTA_BAR + " flex flex-row items-center justify-between gap-4"}>
       <button onClick={onBack} className="shrink-0 text-sm font-semibold text-muted-foreground">← Atrás</button>
       <button onClick={onNext} disabled={disabled} className="shrink-0 rounded-full bg-primary px-6 py-3.5 font-bold text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-40 sm:px-8 sm:py-4">
         Continuar →
