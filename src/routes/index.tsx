@@ -147,7 +147,7 @@ function Question({ title, emoji, subtitle, children }: { title: string; emoji: 
       <span className="text-4xl sm:text-5xl">{emoji}</span>
       <h2 className="mt-3 text-[1.7rem] font-black leading-tight text-ink sm:mt-4 sm:text-4xl">{title}</h2>
       {subtitle && <p className="mt-2 text-sm text-muted-foreground sm:text-base">{subtitle}</p>}
-      <div className="mt-5 sm:mt-8">{children}</div>
+      <div className="mt-5 flex flex-1 flex-col sm:mt-8">{children}</div>
     </section>
   );
 }
