@@ -20,7 +20,7 @@ const WA_NUMBER = "573503818555";
 type Step = 0 | 1 | 2 | 3;
 
 const CTA_BAR =
-  "sticky bottom-0 z-20 -mx-5 mt-auto flex flex-col gap-2 bg-background/85 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:mx-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-0 sm:backdrop-blur-none";
+  "sticky bottom-0 z-20 -mx-5 mt-auto bg-background/85 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:mx-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-0 sm:backdrop-blur-none";
 
 function Index() {
   const [step, setStep] = useState<Step>(0);
