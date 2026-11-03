@@ -20,7 +20,7 @@ const WA_NUMBER = "573503818555";
 type Step = 0 | 1 | 2 | 3;
 
 const CTA_BAR =
-  "sticky bottom-0 z-20 -mx-5 bg-background/85 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:mx-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-0 sm:backdrop-blur-none";
+  "sticky bottom-0 z-20 pt-6 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:pt-8 sm:pb-0";
 
 function Index() {
   const [step, setStep] = useState<Step>(0);
@@ -37,7 +37,7 @@ function Index() {
     <main className="relative min-h-dvh overflow-clip bg-background">
       {/* decor */}
       <div className="pointer-events-none absolute -right-24 -top-20 h-72 w-72 rounded-full bg-secondary" />
-      <svg className="pointer-events-none absolute -bottom-14 -left-14 h-40 w-[22rem] text-primary sm:-bottom-10 sm:-left-10 sm:h-64 sm:w-[28rem]" viewBox="0 0 400 200" aria-hidden>
+      <svg className="pointer-events-none absolute -bottom-10 -left-10 h-28 w-[18rem] text-primary sm:-bottom-10 sm:-left-10 sm:h-64 sm:w-[28rem]" viewBox="0 0 400 200" aria-hidden>
         <path d="M0 40 C 120 0, 180 120, 400 200 L 0 200 Z" fill="currentColor" />
       </svg>
 
@@ -91,7 +91,7 @@ function Index() {
               </div>
               <p className="mt-2 text-[13px] text-muted-foreground sm:mt-5 sm:text-sm">⭐ Más de 200 familias confían en nosotros</p>
 
-              <div className={CTA_BAR + " mt-auto flex flex-col gap-2"}>
+              <div className={CTA_BAR + " mt-auto -mx-5 bg-background/85 px-5 backdrop-blur-md sm:mx-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none flex flex-col gap-2"}>
                 <button onClick={() => setStep(1)} className="pulse-cta flex w-full items-center justify-between gap-4 rounded-full bg-primary px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5 sm:text-lg">
                   Pregunta por nuestros planes <span aria-hidden>→</span>
                 </button>
@@ -161,8 +161,8 @@ function Question({ title, emoji, subtitle, children, cta }: { title: string; em
         <h2 className="mt-3 text-[1.7rem] font-black leading-tight text-ink sm:mt-4 sm:text-4xl">{title}</h2>
         {subtitle && <p className="mt-2 text-sm text-muted-foreground sm:text-base">{subtitle}</p>}
         <div className="mt-5 sm:mt-8">{children}</div>
+        {cta}
       </div>
-      {cta}
     </section>
   );
 }
