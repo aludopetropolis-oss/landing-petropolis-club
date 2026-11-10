@@ -46,7 +46,7 @@ function Index() {
     trackPixel("ViewContent");
   }, []);
 
-  const options = INVESTMENT_OPTIONS[days];
+  const options = INVESTMENT_OPTIONS[days] ?? INVESTMENT_OPTIONS[3]!;
 
   const changeDays = (d: number) => {
     setDays(d);
