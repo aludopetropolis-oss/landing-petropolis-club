@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import logo from "@/assets/petropolis_logo.webp.asset.json";
+
+import { saveLead } from "@/lib/lead.functions";
+import { whatsappUrl, type LeadInput } from "@/lib/lead";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,7 +20,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const WA_NUMBER = "573503818555";
 type Step = 1 | 2 | 3;
 
 const CTA_BAR =
@@ -28,9 +31,17 @@ function Index() {
   const [days, setDays] = useState(3);
   const [address, setAddress] = useState("");
 
+  const [waHref, setWaHref] = useState<string | null>(null);
+  const save = useServerFn(saveLead);
+
   const sendWa = () => {
-    const msg = `¡Hola Petropolis Club! 🐾 Quiero información de sus planes.\n\n• Nombre de mi peludito: ${name.trim()}\n• Días a la semana: ${days}\n• Dirección: ${address.trim()}\n\n¿Tienen cobertura de ruta en mi zona?`;
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
+    const lead: LeadInput = { petName: name.trim(), daysPerWeek: days, address: address.trim() };
+    const url = whatsappUrl(lead);
+    // La ventana se abre primero, dentro del toque, para que el teléfono no la bloquee.
+    window.open(url, "_blank");
+    setWaHref(url);
+    // Guardar la consulta no puede frenar a un lead caliente: si falla, igual se abre WhatsApp.
+    save({ data: lead }).catch(() => {});
   };
 
   return (
@@ -102,6 +113,16 @@ function Index() {
                     <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z" /></svg>
                     Verificar cobertura por WhatsApp
                   </button>
+                  {waHref && (
+                    <a
+                      href={waHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-center text-sm font-bold text-whatsapp underline underline-offset-4"
+                    >
+                      ¿No se abrió WhatsApp? Toca aquí
+                    </a>
+                  )}
                   <button onClick={() => setStep(2)} className="w-full text-sm font-semibold text-muted-foreground">← Atrás</button>
                 </div>
               }
