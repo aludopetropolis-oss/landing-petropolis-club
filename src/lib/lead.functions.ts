@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
-import { leadInputSchema, type LeadInput } from "./lead";
+import { goesToWhatsApp, leadInputSchema, type LeadInput } from "./lead";
 
 export const saveLead = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => leadInputSchema.parse(data) as LeadInput)
@@ -27,7 +27,8 @@ export const saveLead = createServerFn({ method: "POST" })
     const { error } = await supabase.from("leads").insert({
       pet_name: data.petName,
       days_per_week: data.daysPerWeek,
-      address: data.address,
+      investment_range: data.investmentRange,
+      status: goesToWhatsApp(data.daysPerWeek, data.investmentRange) ? "sent_to_whatsapp" : "pending_contact",
     });
 
     if (error) {
