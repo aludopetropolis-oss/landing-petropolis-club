@@ -2,15 +2,55 @@ import { z } from "zod";
 
 export const WA_NUMBER = "573503818555";
 
-export const leadInputSchema = z.object({
-  petName: z.string().trim().min(1, "Pon el nombre de tu peludito").max(40),
-  daysPerWeek: z.number().int().min(1, "Mínimo 1 día").max(5, "Máximo 5 días"),
-  address: z.string().trim().min(5, "Escribe la dirección completa").max(150),
-});
+export const CUSTOM_QUOTE = "Quisiera recibir una cotización personalizada";
+
+// Rangos de inversión mensual según los días a la semana (valores exactos definidos por Petropolis Club).
+export const INVESTMENT_OPTIONS: Record<number, string[]> = {
+  1: ["Menos de $358.800 COP", "Entre $358.800 y $599.999 COP", "$600.000 COP o más"],
+  2: ["Menos de $534.000 COP", "Entre $534.000 y $893.999 COP", "$894.000 COP o más"],
+  3: ["Menos de $696.000 COP", "Entre $696.000 y $1.193.999 COP", "$1.194.000 COP o más"],
+  4: [CUSTOM_QUOTE],
+  5: ["Menos de $890.400 COP", "Entre $890.400 y $1.499.999 COP", "$1.500.000 COP o más"],
+};
+
+const ALL_RANGES = Object.values(INVESTMENT_OPTIONS).flat();
+
+export function investmentOptionsFor(days: number): string[] {
+  return INVESTMENT_OPTIONS[days] ?? [];
+}
+
+// Ruta A: la primera opción (presupuesto inferior) de 1, 2, 3 o 5 días queda pendiente de contacto.
+// Ruta B: la segunda/tercera opción, o la cotización personalizada de 4 días, van a WhatsApp.
+export function goesToWhatsApp(days: number, range: string): boolean {
+  const options = investmentOptionsFor(days);
+  if (!options.includes(range)) return false;
+  return days === 4 || range !== options[0];
+}
+
+export const leadInputSchema = z
+  .object({
+    petName: z.string().trim().min(1, "Pon el nombre de tu peludito").max(40),
+    daysPerWeek: z.number().int().min(1, "Mínimo 1 día").max(5, "Máximo 5 días"),
+    investmentRange: z
+      .string()
+      .trim()
+      .min(1, "Selecciona un rango de inversión")
+      .max(80)
+      .refine((r) => ALL_RANGES.includes(r), "Rango de inversión no válido"),
+  })
+  .superRefine((data, ctx) => {
+    if (!investmentOptionsFor(data.daysPerWeek).includes(data.investmentRange)) {
+      ctx.addIssue({ code: "custom", path: ["investmentRange"], message: "El rango no corresponde a los días elegidos" });
+    }
+  });
 
 export type LeadInput = z.infer<typeof leadInputSchema>;
 
 export function whatsappUrl(lead: LeadInput): string {
-  const msg = `¡Hola Petropolis Club! 🐾 Quiero información de sus planes.\n\n• Nombre de mi peludito: ${lead.petName}\n• Días a la semana: ${lead.daysPerWeek}\n• Dirección: ${lead.address}\n\n¿Tienen cobertura de ruta en mi zona?`;
+  const base = `¡Hola, PETropolis Club! Quiero conocer más sobre los planes de guardería para mi peludito ${lead.petName}. Me gustaría que asistiera ${lead.daysPerWeek} ${lead.daysPerWeek === 1 ? "día" : "días"} por semana`;
+  const msg =
+    lead.investmentRange === CUSTOM_QUOTE
+      ? `${base} y quisiera recibir una cotización personalizada.`
+      : `${base} y tengo contemplada una inversión mensual de ${lead.investmentRange}. Quisiera recibir más información.`;
   return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 }

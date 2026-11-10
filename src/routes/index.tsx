@@ -1,18 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "@/assets/petropolis_logo.webp.asset.json";
 
 import { saveLead } from "@/lib/lead.functions";
-import { whatsappUrl, type LeadInput } from "@/lib/lead";
+import { goesToWhatsApp, investmentOptionsFor, whatsappUrl, type LeadInput } from "@/lib/lead";
+import { initPixel, track } from "@/lib/pixel";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Petropolis Club | Planes de recreación para tu perrito" },
-      { name: "description", content: "Planes de recreación, colegio y hospedaje para tu perrito desde $358.000 al mes. Verifica cobertura de ruta." },
+      { name: "description", content: "Planes de recreación, colegio y hospedaje para tu perrito desde $358.000 al mes. Cuéntanos de tu peludito." },
       { property: "og:title", content: "Petropolis Club | Planes para tu perrito" },
-      { property: "og:description", content: "Planes desde $358.000/mes. Pregunta por cobertura de ruta." },
+      { property: "og:description", content: "Planes desde $358.000/mes. Cuéntanos de tu peludito." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2 | 3 | 4;
 
 const CTA_BAR =
   "sticky bottom-0 z-20 pt-6 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:pt-8 sm:pb-0";
@@ -29,20 +30,54 @@ function Index() {
   const [step, setStep] = useState<Step>(1);
   const [name, setName] = useState("");
   const [days, setDays] = useState(3);
-  const [address, setAddress] = useState("");
+  const [range, setRange] = useState<string | null>(null);
 
   const [waHref, setWaHref] = useState<string | null>(null);
   const save = useServerFn(saveLead);
 
+  useEffect(() => {
+    initPixel();
+    track("PageView");
+    track("ViewContent");
+  }, []);
+
+  const lead = (): LeadInput => ({ petName: name.trim(), daysPerWeek: days, investmentRange: range! });
+
+  const changeDays = (n: number) => {
+    setDays(n);
+    // Si cambian los días, el rango elegido ya no aplica: se limpia para evitar inconsistencias.
+    setRange(null);
+    setWaHref(null);
+  };
+
   const sendWa = () => {
-    const lead: LeadInput = { petName: name.trim(), daysPerWeek: days, address: address.trim() };
-    const url = whatsappUrl(lead);
+    const data = lead();
+    const url = whatsappUrl(data);
     // La ventana se abre primero, dentro del toque, para que el teléfono no la bloquee.
     window.open(url, "_blank");
     setWaHref(url);
+    track("Lead");
+    track("Contact");
     // Guardar la consulta no puede frenar a un lead caliente: si falla, igual se abre WhatsApp.
-    save({ data: lead }).catch(() => {});
+    save({ data }).catch(() => {});
   };
+
+  const finishPending = () => {
+    track("Lead");
+    save({ data: lead() }).catch(() => {});
+    setStep(4);
+  };
+
+  const reset = () => {
+    setStep(1);
+    setName("");
+    setDays(3);
+    setRange(null);
+    setWaHref(null);
+  };
+
+  const options = investmentOptionsFor(days);
+  const waRoute = range !== null && goesToWhatsApp(days, range);
 
   return (
     <main className="relative min-h-dvh overflow-clip bg-background">
@@ -93,7 +128,7 @@ function Index() {
             >
               <div className="rounded-3xl bg-card p-4 shadow-sm sm:p-6">
                 <p className="text-center text-5xl font-black text-primary sm:text-6xl">{days}<span className="ml-2 text-lg text-ink sm:text-xl">{days === 1 ? "día" : "días"}</span></p>
-                <input type="range" min={1} max={5} step={1} value={days} onChange={(e) => setDays(Number(e.target.value))} className="range-brand mt-4 w-full sm:mt-6" aria-label="Días a la semana" />
+                <input type="range" min={1} max={5} step={1} value={days} onChange={(e) => changeDays(Number(e.target.value))} className="range-brand mt-4 w-full sm:mt-6" aria-label="Días a la semana" />
                 <div className="mt-2 flex justify-between text-sm font-bold text-muted-foreground">
                   {[1, 2, 3, 4, 5].map((d) => <span key={d}>{d}</span>)}
                 </div>
@@ -103,32 +138,69 @@ function Index() {
 
           {step === 3 && (
             <Question
-              title="¿Cuál es tu dirección?"
-              emoji="📍"
-              subtitle="La usamos para verificar la cobertura de nuestra ruta."
+              title="¿Qué inversión mensual te gustaría destinar para que tu peludito disfrute de todo lo que PETropolis Club tiene para él?"
+              emoji="💛"
+              subtitle="Selecciona el rango de inversión que mejor se ajuste a la frecuencia con la que te gustaría que tu peludito asistiera a PETropolis Club."
               cta={
-                <div className={CTA_BAR + " flex flex-col gap-2"}>
-                  <button disabled={address.trim().length < 5} onClick={sendWa}
-                    className="pulse-cta flex w-full items-center justify-center gap-3 rounded-full bg-whatsapp px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:animate-none disabled:opacity-40 sm:px-8 sm:py-5 sm:text-lg">
-                    <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z" /></svg>
-                    Verificar cobertura por WhatsApp
+                waRoute ? (
+                  <div className={CTA_BAR + " flex flex-col gap-2"}>
+                    <button onClick={sendWa}
+                      className="pulse-cta flex w-full items-center justify-center gap-3 rounded-full bg-whatsapp px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5 sm:text-lg">
+                      <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z" /></svg>
+                      Hablar con Petropolis por WhatsApp
+                    </button>
+                    {waHref && (
+                      <a
+                        href={waHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-center text-sm font-bold text-whatsapp underline underline-offset-4"
+                      >
+                        ¿No se abrió WhatsApp? Toca aquí
+                      </a>
+                    )}
+                    <button onClick={() => setStep(2)} className="w-full text-sm font-semibold text-muted-foreground">← Atrás</button>
+                  </div>
+                ) : (
+                  <Nav onBack={() => setStep(2)} onNext={finishPending} disabled={!range} nextLabel="Continuar →" />
+                )
+              }
+            >
+              <div className="flex flex-col gap-3" role="radiogroup" aria-label="Rango de inversión mensual">
+                {options.map((opt) => (
+                  <button
+                    key={opt}
+                    role="radio"
+                    aria-checked={range === opt}
+                    onClick={() => setRange(opt)}
+                    className={`rounded-2xl border-2 px-4 py-3.5 text-left text-base font-bold transition-all active:scale-[0.98] sm:px-5 sm:py-4 sm:text-lg ${
+                      range === opt
+                        ? "border-primary bg-card text-primary shadow-sm"
+                        : "border-input bg-card text-ink hover:border-primary/50"
+                    }`}
+                  >
+                    {opt}
                   </button>
-                  {waHref && (
-                    <a
-                      href={waHref}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-center text-sm font-bold text-whatsapp underline underline-offset-4"
-                    >
-                      ¿No se abrió WhatsApp? Toca aquí
-                    </a>
-                  )}
-                  <button onClick={() => setStep(2)} className="w-full text-sm font-semibold text-muted-foreground">← Atrás</button>
+                ))}
+              </div>
+            </Question>
+          )}
+
+          {step === 4 && (
+            <Question
+              title="¡Gracias por tu interés en PETropolis Club!"
+              emoji="🐾"
+              subtitle="Hemos recibido tus respuestas. Nuestro equipo se pondrá en contacto contigo para brindarte más información y orientarte sobre las opciones disponibles para tu peludito."
+              cta={
+                <div className={CTA_BAR}>
+                  <button onClick={reset}
+                    className="w-full rounded-full bg-primary px-6 py-4 font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5">
+                    Finalizar
+                  </button>
                 </div>
               }
             >
-              <input autoFocus value={address} maxLength={150} onChange={(e) => setAddress(e.target.value)}
-                placeholder="Ej: Calle 123 #45-67, barrio" className="w-full rounded-2xl border-2 border-input bg-card px-4 py-3 text-base font-semibold outline-none transition focus:border-primary sm:px-5 sm:py-4 sm:text-lg" />
+              <span />
             </Question>
           )}
         </div>
@@ -151,14 +223,14 @@ function Question({ title, emoji, subtitle, children, cta }: { title: string; em
   );
 }
 
-function Nav({ onBack, onNext, disabled }: { onBack?: () => void; onNext: () => void; disabled?: boolean }) {
+function Nav({ onBack, onNext, disabled, nextLabel = "Continuar →" }: { onBack?: () => void; onNext: () => void; disabled?: boolean; nextLabel?: string }) {
   return (
     <div className={CTA_BAR + " flex flex-row items-center justify-between gap-4"}>
       {onBack && (
         <button onClick={onBack} className="shrink-0 text-sm font-semibold text-muted-foreground">← Atrás</button>
       )}
       <button onClick={onNext} disabled={disabled} className={`shrink-0 rounded-full bg-primary px-6 py-3.5 font-bold text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-40 sm:px-8 sm:py-4 ${onBack ? "" : "w-full"}`}>
-        Continuar →
+        {nextLabel}
       </button>
     </div>
   );
