@@ -7,7 +7,7 @@ declare global {
   }
 }
 
-const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
+const PIXEL_ID = import.meta.env["VITE_META_PIXEL_ID"] as string | undefined;
 
 let loaded = false;
 
