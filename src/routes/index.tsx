@@ -47,9 +47,6 @@ function Index() {
   }, []);
 
   const options = INVESTMENT_OPTIONS[days];
-  // La primera opción (presupuesto inferior) va a la pantalla de contacto; el resto y la
-  // cotización personalizada de 4 días van a WhatsApp.
-  const goesToWhatsApp = days === 4 || (investment !== null && investment > 0);
 
   const changeDays = (d: number) => {
     setDays(d);
