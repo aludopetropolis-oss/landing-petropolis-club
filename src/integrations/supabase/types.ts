@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       leads: {
         Row: {
+          address: string | null
           created_at: string
           days_per_week: number
           id: string
@@ -24,14 +25,16 @@ export type Database = {
           status: string
         }
         Insert: {
+          address?: string | null
           created_at?: string
           days_per_week: number
           id?: string
-          investment_range: string
+          investment_range?: string
           pet_name: string
           status?: string
         }
         Update: {
+          address?: string | null
           created_at?: string
           days_per_week?: number
           id?: string
