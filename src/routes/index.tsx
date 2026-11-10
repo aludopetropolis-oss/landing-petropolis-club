@@ -36,7 +36,7 @@ function Index() {
   return (
     <main className="relative min-h-dvh overflow-clip bg-background">
       {/* decor */}
-      <div className="pointer-events-none absolute -right-24 -top-20 h-72 w-72 rounded-full bg-secondary" />
+      <div className="pointer-events-none absolute -right-20 -top-24 h-44 w-44 rounded-full bg-secondary/70 sm:-right-24 sm:-top-28 sm:h-64 sm:w-64" />
       <svg className="pointer-events-none absolute -bottom-10 -left-10 h-28 w-[18rem] text-primary sm:-bottom-10 sm:-left-10 sm:h-64 sm:w-[28rem]" viewBox="0 0 400 200" aria-hidden>
         <path d="M0 40 C 120 0, 180 120, 400 200 L 0 200 Z" fill="currentColor" />
       </svg>
@@ -55,7 +55,7 @@ function Index() {
 
         <div className="mt-4 flex gap-2 sm:mt-6" aria-label="Progreso">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
+            <div key={i} className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
               <div className="h-full bg-primary transition-all duration-500" style={{ width: step >= i ? "100%" : "0%" }} />
             </div>
           ))}
@@ -133,12 +133,10 @@ function Question({ title, emoji, subtitle, children, cta }: { title: string; em
 function Nav({ onBack, onNext, disabled }: { onBack?: () => void; onNext: () => void; disabled?: boolean }) {
   return (
     <div className={CTA_BAR + " flex flex-row items-center justify-between gap-4"}>
-      {onBack ? (
+      {onBack && (
         <button onClick={onBack} className="shrink-0 text-sm font-semibold text-muted-foreground">← Atrás</button>
-      ) : (
-        <span aria-hidden />
       )}
-      <button onClick={onNext} disabled={disabled} className="shrink-0 rounded-full bg-primary px-6 py-3.5 font-bold text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-40 sm:px-8 sm:py-4">
+      <button onClick={onNext} disabled={disabled} className={`shrink-0 rounded-full bg-primary px-6 py-3.5 font-bold text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-40 sm:px-8 sm:py-4 ${onBack ? "" : "w-full"}`}>
         Continuar →
       </button>
     </div>
