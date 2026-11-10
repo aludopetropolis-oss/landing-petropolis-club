@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
       { title: "Petropolis Club | Planes de recreación para tu perrito" },
       { name: "description", content: "Planes de recreación, colegio y hospedaje para tu perrito desde $358.000 al mes. Verifica cobertura de ruta." },
       { property: "og:title", content: "Petropolis Club | Planes para tu perrito" },
-      { property: "og:description", content: "Planes desde $358.000/mes. Pregunta por cupos y cobertura de ruta." },
+      { property: "og:description", content: "Planes desde $358.000/mes. Pregunta por cobertura de ruta." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -17,13 +17,13 @@ export const Route = createFileRoute("/")({
 });
 
 const WA_NUMBER = "573503818555";
-type Step = 0 | 1 | 2 | 3;
+type Step = 1 | 2 | 3;
 
 const CTA_BAR =
   "sticky bottom-0 z-20 pt-6 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:pt-8 sm:pb-0";
 
 function Index() {
-  const [step, setStep] = useState<Step>(0);
+  const [step, setStep] = useState<Step>(1);
   const [name, setName] = useState("");
   const [days, setDays] = useState(3);
   const [address, setAddress] = useState("");
@@ -47,63 +47,26 @@ function Index() {
             <img src={logo.url} alt="Petropolis Club" width={72} height={72} className="h-11 w-11 shrink-0 floaty sm:h-16 sm:w-16" fetchPriority="high" />
             <span className="truncate text-sm font-black text-ink sm:text-base">Petropolis Club</span>
           </div>
-          <span className="shrink-0 rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-primary-foreground sm:text-xs">🔥 Cupos limitados</span>
+          <div className="shrink-0 rounded-2xl bg-paper px-3 py-1.5 text-right sm:px-4 sm:py-2">
+            <p className="text-[11px] font-bold text-muted-foreground line-through decoration-primary decoration-2 sm:text-sm">Antes $449.000</p>
+            <p className="text-base font-black leading-none text-primary sm:text-2xl">$358.000<span className="text-[11px] font-bold text-ink sm:text-sm"> / mes</span></p>
+          </div>
         </header>
 
-        {step > 0 && (
-          <div className="mt-4 flex gap-2 sm:mt-6" aria-label="Progreso">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
-                <div className="h-full bg-primary transition-all duration-500" style={{ width: step >= i ? "100%" : "0%" }} />
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="mt-4 flex gap-2 sm:mt-6" aria-label="Progreso">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
+              <div className="h-full bg-primary transition-all duration-500" style={{ width: step >= i ? "100%" : "0%" }} />
+            </div>
+          ))}
+        </div>
 
         <div key={step} className="rise mt-5 flex flex-1 flex-col sm:mt-8">
-          {step === 0 && (
-            <section className="flex flex-1 flex-col">
-              <h1 className="text-[1.9rem] font-black leading-[1.06] tracking-tight text-ink sm:text-6xl sm:leading-[1.02]">
-                Los mejores planes de recreación <span className="text-primary">para tu perrito</span>
-              </h1>
-              <p className="mt-3 text-base leading-snug text-muted-foreground sm:mt-5 sm:text-lg">
-                Planes desde 1 día a la semana hasta todos los días, todas las semanas del mes.
-              </p>
-
-              <div className="mt-4 rounded-3xl bg-paper px-5 py-3 shadow-sm sm:mt-6 sm:inline-block sm:px-6 sm:py-4">
-                <p className="flex flex-wrap items-center gap-x-2 text-sm font-bold text-ink">
-                  Antes <span className="text-muted-foreground line-through decoration-primary decoration-2">$449.000</span>
-                  <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] text-primary-foreground">Ahorra 20%</span>
-                </p>
-                <p className="mt-1 text-sm font-bold text-ink">Planes desde</p>
-                <p className="flex flex-wrap items-end gap-x-2">
-                  <span className="text-[2.6rem] font-black leading-none text-primary sm:text-6xl">$358.000</span>
-                  <span className="mb-1 text-sm font-bold text-ink">/ mensual</span>
-                </p>
-              </div>
-
-              <p className="mt-3 text-[13px] font-medium text-ink sm:mt-4 sm:text-sm">⏳ Precio de lanzamiento solo para nuevos peluditos este mes</p>
-
-              <div className="mt-3 flex flex-wrap gap-2 sm:mt-6">
-                {["🏫 Colegio", "🛏️ Hospedaje", "🐾 Recreación"].map((t) => (
-                  <span key={t} className="rounded-full bg-card px-3 py-1.5 text-[13px] font-semibold text-ink shadow-sm sm:px-4 sm:py-2 sm:text-sm">{t}</span>
-                ))}
-              </div>
-              <p className="mt-2 text-[13px] text-muted-foreground sm:mt-5 sm:text-sm">⭐ Más de 200 familias confían en nosotros</p>
-
-              <div className={CTA_BAR + " mt-auto -mx-5 bg-background/85 px-5 backdrop-blur-md sm:mx-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none flex flex-col gap-2"}>
-                <button onClick={() => setStep(1)} className="pulse-cta flex w-full items-center justify-between gap-4 rounded-full bg-primary px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5 sm:text-lg">
-                  Pregunta por nuestros planes <span aria-hidden>→</span>
-                </button>
-              </div>
-            </section>
-          )}
-
           {step === 1 && (
             <Question
               title="¿Cuál es el nombre de tu peludito?"
               emoji="🐶"
-              cta={<Nav onBack={() => setStep(0)} onNext={() => setStep(2)} disabled={!name.trim()} />}
+              cta={<Nav onNext={() => setStep(2)} disabled={!name.trim()} />}
             >
               <input autoFocus value={name} maxLength={40} onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && name.trim() && setStep(2)}
@@ -167,10 +130,14 @@ function Question({ title, emoji, subtitle, children, cta }: { title: string; em
   );
 }
 
-function Nav({ onBack, onNext, disabled }: { onBack: () => void; onNext: () => void; disabled?: boolean }) {
+function Nav({ onBack, onNext, disabled }: { onBack?: () => void; onNext: () => void; disabled?: boolean }) {
   return (
     <div className={CTA_BAR + " flex flex-row items-center justify-between gap-4"}>
-      <button onClick={onBack} className="shrink-0 text-sm font-semibold text-muted-foreground">← Atrás</button>
+      {onBack ? (
+        <button onClick={onBack} className="shrink-0 text-sm font-semibold text-muted-foreground">← Atrás</button>
+      ) : (
+        <span aria-hidden />
+      )}
       <button onClick={onNext} disabled={disabled} className="shrink-0 rounded-full bg-primary px-6 py-3.5 font-bold text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-40 sm:px-8 sm:py-4">
         Continuar →
       </button>
