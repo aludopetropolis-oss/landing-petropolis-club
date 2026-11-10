@@ -56,7 +56,7 @@ function Index() {
   const chooseInvestment = async (index: number) => {
     if (saving) return;
     setInvestment(index);
-    const range = options[index];
+    const range = options[index] ?? "";
     const toWhatsApp = days === 4 || index > 0;
     setSaving(true);
     try {
