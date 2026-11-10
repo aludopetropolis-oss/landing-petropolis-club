@@ -13,14 +13,14 @@ export const saveLead = createServerFn({ method: "POST" })
     const supabase = createClient<Database>(url, key, {
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
       global: {
-        fetch: (input, init) => {
+        fetch: ((input: RequestInfo | URL, init?: RequestInit) => {
           const headers = new Headers(init?.headers);
           if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) {
             headers.delete("Authorization");
           }
           headers.set("apikey", key);
           return fetch(input, { ...init, headers });
-        },
+        }) as typeof fetch,
       },
     });
 
