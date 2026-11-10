@@ -138,9 +138,9 @@ function Index() {
 
           {step === 3 && (
             <Question
-              title="¿Qué inversión mensual te gustaría destinar para que tu peludito disfrute de todo lo que PETropolis Club tiene para él?"
+              title="¿Qué inversión mensual harías para que tu peludito disfrute de PETropolis Club?"
               emoji="💛"
-              subtitle="Selecciona el rango de inversión que mejor se ajuste a la frecuencia con la que te gustaría que tu peludito asistiera a PETropolis Club."
+              subtitle="Queremos encontrar el plan ideal para que disfrute, aprenda, socialice y viva nuevas experiencias en PETropolis Club"
               cta={
                 waRoute ? (
                   <div className={CTA_BAR + " flex flex-col gap-2"}>
