@@ -66,13 +66,6 @@ function Index() {
     setStep(waRoute ? 5 : 4);
   };
 
-  const reset = () => {
-    setStep(1);
-    setName("");
-    setDays(3);
-    setRange(null);
-    setWaHref(null);
-  };
 
   const options = investmentOptionsFor(days);
   const waRoute = range !== null && goesToWhatsApp(days, range);
