@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import logo from "@/assets/petropolis_logo.webp.asset.json";
+import logoUrl from "@/assets/petropolis_logo.webp";
 
 import { saveLead } from "@/lib/lead.functions";
 import { goesToWhatsApp, investmentOptionsFor, whatsappUrl, type LeadInput } from "@/lib/lead";
@@ -81,7 +81,7 @@ function Index() {
       <div className="relative mx-auto flex min-h-dvh max-w-xl flex-col px-5 pb-2 pt-4 sm:px-6 sm:pt-6">
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <img src={logo.url} alt="Petropolis Club" width={72} height={72} className="h-11 w-11 shrink-0 floaty sm:h-16 sm:w-16" fetchPriority="high" />
+            <img src={logoUrl} alt="Petropolis Club" width={72} height={72} className="h-11 w-11 shrink-0 floaty sm:h-16 sm:w-16" fetchPriority="high" />
             <span className="truncate text-sm font-black text-ink sm:text-base">Petropolis Club</span>
           </div>
         </header>
