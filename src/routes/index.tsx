@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3 | 4 | 5;
 
 const CTA_BAR =
   "sticky bottom-0 z-20 pt-6 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:pt-8 sm:pb-0";
@@ -56,16 +56,14 @@ function Index() {
     // La ventana se abre primero, dentro del toque, para que el teléfono no la bloquee.
     window.open(url, "_blank");
     setWaHref(url);
-    track("Lead");
     track("Contact");
-    // Guardar la consulta no puede frenar a un lead caliente: si falla, igual se abre WhatsApp.
-    save({ data }).catch(() => {});
   };
 
-  const finishPending = () => {
+  const finish = () => {
     track("Lead");
+    // Guardar la consulta no puede frenar al lead: si falla, igual avanza.
     save({ data: lead() }).catch(() => {});
-    setStep(4);
+    setStep(waRoute ? 5 : 4);
   };
 
   const reset = () => {
@@ -141,30 +139,7 @@ function Index() {
               title="¿Qué inversión mensual harías para que tu peludito disfrute de PETropolis Club?"
               emoji="💛"
               subtitle="Queremos encontrar el plan ideal para que disfrute, aprenda, socialice y viva nuevas experiencias en PETropolis Club"
-              cta={
-                waRoute ? (
-                  <div className={CTA_BAR + " flex flex-col gap-2"}>
-                    <button onClick={sendWa}
-                      className="pulse-cta flex w-full items-center justify-center gap-3 rounded-full bg-whatsapp px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5 sm:text-lg">
-                      <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z" /></svg>
-                      Hablar con Petropolis por WhatsApp
-                    </button>
-                    {waHref && (
-                      <a
-                        href={waHref}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-center text-sm font-bold text-whatsapp underline underline-offset-4"
-                      >
-                        ¿No se abrió WhatsApp? Toca aquí
-                      </a>
-                    )}
-                    <button onClick={() => setStep(2)} className="w-full text-sm font-semibold text-muted-foreground">← Atrás</button>
-                  </div>
-                ) : (
-                  <Nav onBack={() => setStep(2)} onNext={finishPending} disabled={!range} nextLabel="Continuar →" />
-                )
-              }
+              cta={<Nav onBack={() => setStep(2)} onNext={finish} disabled={!range} />}
             >
               <div className="flex flex-col gap-3" role="radiogroup" aria-label="Rango de inversión mensual">
                 {options.map((opt) => (
@@ -188,16 +163,38 @@ function Index() {
 
           {step === 4 && (
             <Question
-              title="¡Gracias por tu interés en PETropolis Club!"
+              title="¡Pronto te contactaremos!"
               emoji="🐾"
-              subtitle="Hemos recibido tus respuestas. Nuestro equipo se pondrá en contacto contigo para brindarte más información y orientarte sobre las opciones disponibles para tu peludito."
+              subtitle={`Gracias por tu interés en PETropolis Club. Nuestro equipo se pondrá en contacto contigo para contarte el plan ideal para ${name.trim() || "tu peludito"}.`}
+            >
+              <span />
+            </Question>
+          )}
+
+          {step === 5 && (
+            <Question
+              title="Escríbenos por WhatsApp"
+              emoji="💬"
+              subtitle={`Para continuar, contáctanos por WhatsApp y te contamos el plan ideal para ${name.trim() || "tu peludito"}.`}
               cta={
-                <div className={CTA_BAR}>
-                  <button onClick={reset}
-                    className="w-full rounded-full bg-primary px-6 py-4 font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5">
-                    Finalizar
-                  </button>
-                </div>
+                  <div className={CTA_BAR + " flex flex-col gap-2"}>
+                    <button onClick={sendWa}
+                      className="pulse-cta flex w-full items-center justify-center gap-3 rounded-full bg-whatsapp px-6 py-4 text-base font-bold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 sm:px-8 sm:py-5 sm:text-lg">
+                      <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="currentColor" aria-hidden><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z" /></svg>
+                      Hablar con Petropolis por WhatsApp
+                    </button>
+                    {waHref && (
+                      <a
+                        href={waHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-center text-sm font-bold text-whatsapp underline underline-offset-4"
+                      >
+                        ¿No se abrió WhatsApp? Toca aquí
+                      </a>
+                    )}
+                    <button onClick={() => setStep(3)} className="w-full text-sm font-semibold text-muted-foreground">← Atrás</button>
+                  </div>
               }
             >
               <span />
