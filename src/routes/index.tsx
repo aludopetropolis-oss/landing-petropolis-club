@@ -84,10 +84,6 @@ function Index() {
             <img src={logo.url} alt="Petropolis Club" width={72} height={72} className="h-11 w-11 shrink-0 floaty sm:h-16 sm:w-16" fetchPriority="high" />
             <span className="truncate text-sm font-black text-ink sm:text-base">Petropolis Club</span>
           </div>
-          <div className="shrink-0 rounded-2xl bg-paper px-3 py-1.5 text-right sm:px-4 sm:py-2">
-            <p className="text-[11px] font-bold text-muted-foreground line-through decoration-primary decoration-2 sm:text-sm">Antes $449.000</p>
-            <p className="text-base font-black leading-none text-primary sm:text-2xl">$358.000<span className="text-[11px] font-bold text-ink sm:text-sm"> / mes</span></p>
-          </div>
         </header>
 
         <div className="mt-4 flex gap-2 sm:mt-6" aria-label="Progreso">
