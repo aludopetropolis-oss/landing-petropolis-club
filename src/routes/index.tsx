@@ -125,7 +125,7 @@ function Index() {
 
           {step === 3 && (
             <Question
-              title="¿Qué inversión mensual harías para que tu peludito disfrute de PETropolis Club?"
+              title="Según los días que elegiste, ¿Cuánto invertirías al MES en PETropolis Club para tu peludito?"
               emoji="💛"
               subtitle="Queremos encontrar el plan ideal para que disfrute, aprenda, socialice y viva nuevas experiencias en PETropolis Club"
               cta={<Nav onBack={() => setStep(2)} onNext={finish} disabled={!range} />}
