@@ -9,7 +9,7 @@ export const INVESTMENT_OPTIONS: Record<number, string[]> = {
   4: ["Entre $358.800 - $462.000", "Entre $462.000 - $564.000", "$564.000 o Más"],
   8: ["Entre $534.000 - $687.600", "Entre $687.600 - $840.000", "$840.000 o más"],
   12: ["Entre $696.000 - $898.800", "Entre $898.000 - $1.098.000", "$1.098.000 o Más"],
-  20: ["Menos de $890.400 COP", "Entre $890.400 y $1.499.999 COP", "$1.500.000 COP o más"],
+  20: ["Entre $890.400 - $1.144.800", "Entre $1.144.800 - $1.380.000", "$1.380.000 o Más"],
 };
 
 const ALL_RANGES = Object.values(INVESTMENT_OPTIONS).flat();
