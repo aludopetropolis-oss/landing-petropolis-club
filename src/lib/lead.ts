@@ -19,12 +19,9 @@ export function investmentOptionsFor(days: number): string[] {
   return INVESTMENT_OPTIONS[days] ?? [];
 }
 
-// Ruta A: la primera opción (presupuesto inferior) de 1, 2, 3 o 5 días queda pendiente de contacto.
-// Ruta B: la segunda/tercera opción, o la cotización personalizada de 4 días, van a WhatsApp.
+// Todas las opciones válidas llevan a la pantalla de WhatsApp.
 export function goesToWhatsApp(days: number, range: string): boolean {
-  const options = investmentOptionsFor(days);
-  if (!options.includes(range)) return false;
-  return days === 4 || range !== options[0];
+  return investmentOptionsFor(days).includes(range);
 }
 
 export const leadInputSchema = z
