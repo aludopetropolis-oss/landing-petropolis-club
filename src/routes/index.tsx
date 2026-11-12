@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import logoUrl from "@/assets/petropolis_logo.webp";
 
 import { saveLead } from "@/lib/lead.functions";
-import { goesToWhatsApp, investmentOptionsFor, whatsappUrl, type LeadInput } from "@/lib/lead";
+import { DAY_OPTIONS, goesToWhatsApp, investmentOptionsFor, whatsappUrl, type LeadInput } from "@/lib/lead";
 import { initPixel, track } from "@/lib/pixel";
 
 export const Route = createFileRoute("/")({
@@ -29,7 +29,7 @@ const CTA_BAR =
 function Index() {
   const [step, setStep] = useState<Step>(1);
   const [name, setName] = useState("");
-  const [days, setDays] = useState(3);
+  const [days, setDays] = useState<number>(8);
   const [range, setRange] = useState<string | null>(null);
 
   const [waHref, setWaHref] = useState<string | null>(null);
@@ -109,15 +109,15 @@ function Index() {
 
           {step === 2 && (
             <Question
-              title={`¿Cuántos días a la semana estás interesado en dejarnos a ${name.trim() || "tu peludito"}?`}
+              title={`¿Cuántos días al mes estás interesado en dejarnos a ${name.trim() || "tu peludito"}?`}
               emoji="📅"
               cta={<Nav onBack={() => setStep(1)} onNext={() => setStep(3)} />}
             >
               <div className="rounded-3xl bg-card p-4 shadow-sm sm:p-6">
-                <p className="text-center text-5xl font-black text-primary sm:text-6xl">{days}<span className="ml-2 text-lg text-ink sm:text-xl">{days === 1 ? "día" : "días"}</span></p>
-                <input type="range" min={1} max={5} step={1} value={days} onChange={(e) => changeDays(Number(e.target.value))} className="range-brand mt-4 w-full sm:mt-6" aria-label="Días a la semana" />
+                <p className="text-center text-5xl font-black text-primary sm:text-6xl">{days}<span className="ml-2 text-lg text-ink sm:text-xl">días al mes</span></p>
+                <input type="range" min={0} max={DAY_OPTIONS.length - 1} step={1} value={DAY_OPTIONS.indexOf(days as (typeof DAY_OPTIONS)[number])} onChange={(e) => changeDays(DAY_OPTIONS[Number(e.target.value)])} className="range-brand mt-4 w-full sm:mt-6" aria-label="Días al mes" />
                 <div className="mt-2 flex justify-between text-sm font-bold text-muted-foreground">
-                  {[1, 2, 3, 4, 5].map((d) => <span key={d}>{d}</span>)}
+                  {DAY_OPTIONS.map((d) => <span key={d}>{d}</span>)}
                 </div>
               </div>
             </Question>
