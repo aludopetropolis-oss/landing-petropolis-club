@@ -5,7 +5,8 @@ import logoUrl from "@/assets/petropolis_logo.webp";
 
 import { saveLead } from "@/lib/lead.functions";
 import { DAY_OPTIONS, goesToWhatsApp, investmentOptionsFor, whatsappUrl, type LeadInput } from "@/lib/lead";
-import { initPixel, track } from "@/lib/pixel";
+import { initPixel, readCookie, track } from "@/lib/pixel";
+import { sendCapiLead } from "@/lib/capi.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,6 +35,7 @@ function Index() {
 
   const [waHref, setWaHref] = useState<string | null>(null);
   const save = useServerFn(saveLead);
+  const capi = useServerFn(sendCapiLead);
 
   useEffect(() => {
     initPixel();
@@ -56,11 +58,14 @@ function Index() {
     // La ventana se abre primero, dentro del toque, para que el teléfono no la bloquee.
     window.open(url, "_blank");
     setWaHref(url);
+    // Lead = clic en WhatsApp. Mismo event_id en navegador y servidor para que Meta deduplique.
+    const eventId = `lead_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+    track("Lead", eventId);
     track("Contact");
+    capi({ data: { eventId, eventSourceUrl: window.location.href, fbp: readCookie("_fbp"), fbc: readCookie("_fbc") } }).catch(() => {});
   };
 
   const finish = () => {
-    track("Lead");
     // Guardar la consulta no puede frenar al lead: si falla, igual avanza.
     save({ data: lead() }).catch(() => {});
     setStep(waRoute ? 5 : 4);

@@ -7,7 +7,7 @@ declare global {
   }
 }
 
-const PIXEL_ID = import.meta.env["VITE_META_PIXEL_ID"] as string | undefined;
+const PIXEL_ID = (import.meta.env["VITE_META_PIXEL_ID"] as string | undefined) || "1480488820643263";
 
 let loaded = false;
 
@@ -31,7 +31,14 @@ export function initPixel() {
 
 export type PixelEvent = "PageView" | "ViewContent" | "Lead" | "Contact";
 
-export function track(event: PixelEvent) {
+export function track(event: PixelEvent, eventId?: string) {
   if (!PIXEL_ID || typeof window === "undefined" || !window.fbq) return;
-  window.fbq("track", event);
+  if (eventId) window.fbq("track", event, {}, { eventID: eventId });
+  else window.fbq("track", event);
+}
+
+export function readCookie(name: string): string | undefined {
+  if (typeof document === "undefined") return undefined;
+  const m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+  return m ? decodeURIComponent(m[1]!) : undefined;
 }
