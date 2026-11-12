@@ -7,7 +7,7 @@ export const CUSTOM_QUOTE = "Quisiera recibir una cotización personalizada";
 // Rangos de inversión mensual según los días a la semana (valores exactos definidos por Petropolis Club).
 export const INVESTMENT_OPTIONS: Record<number, string[]> = {
   1: ["Entre $358.800 - $462.000", "Entre $462.000 - $564.000", "Entre $564.000 o Más"],
-  2: ["Menos de $534.000 COP", "Entre $534.000 y $893.999 COP", "$894.000 COP o más"],
+  2: ["Entre $534.000 - $687.600", "Entre $687.600 - $840.000", "$840.000 o más"],
   3: ["Menos de $696.000 COP", "Entre $696.000 y $1.193.999 COP", "$1.194.000 COP o más"],
   4: [CUSTOM_QUOTE],
   5: ["Menos de $890.400 COP", "Entre $890.400 y $1.499.999 COP", "$1.500.000 COP o más"],
