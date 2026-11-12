@@ -1,116 +1,37 @@
 import { describe, expect, it } from "vitest";
+import { DAY_OPTIONS, goesToWhatsApp, investmentOptionsFor, leadInputSchema, whatsappUrl } from "@/lib/lead";
 
-import { CUSTOM_QUOTE, goesToWhatsApp, investmentOptionsFor, leadInputSchema, whatsappUrl } from "@/lib/lead";
-
-describe("Rangos de inversión según los días a la semana", () => {
-  it("1 día: menos de $358.800, entre $358.800 y $599.999, $600.000 o más", () => {
-    expect(investmentOptionsFor(1)).toEqual([
-      "Menos de $358.800 COP",
-      "Entre $358.800 y $599.999 COP",
-      "$600.000 COP o más",
-    ]);
-  });
-
-  it("2 días: menos de $534.000, entre $534.000 y $893.999, $894.000 o más", () => {
-    expect(investmentOptionsFor(2)).toEqual([
-      "Menos de $534.000 COP",
-      "Entre $534.000 y $893.999 COP",
-      "$894.000 COP o más",
-    ]);
-  });
-
-  it("3 días: menos de $696.000, entre $696.000 y $1.193.999, $1.194.000 o más", () => {
-    expect(investmentOptionsFor(3)).toEqual([
-      "Menos de $696.000 COP",
-      "Entre $696.000 y $1.193.999 COP",
-      "$1.194.000 COP o más",
-    ]);
-  });
-
-  it("4 días: solo cotización personalizada, sin precios", () => {
-    expect(investmentOptionsFor(4)).toEqual([CUSTOM_QUOTE]);
-  });
-
-  it("5 días: menos de $890.400, entre $890.400 y $1.499.999, $1.500.000 o más", () => {
-    expect(investmentOptionsFor(5)).toEqual([
-      "Menos de $890.400 COP",
-      "Entre $890.400 y $1.499.999 COP",
-      "$1.500.000 COP o más",
-    ]);
+describe("Días al mes", () => {
+  it("solo 4, 8, 12 y 20 días", () => {
+    expect([...DAY_OPTIONS]).toEqual([4, 8, 12, 20]);
   });
 });
 
-describe("Rutas del formulario", () => {
-  it("la primera opción de 1, 2, 3 y 5 días también va a WhatsApp", () => {
-    expect(goesToWhatsApp(1, "Menos de $358.800 COP")).toBe(true);
-    expect(goesToWhatsApp(2, "Menos de $534.000 COP")).toBe(true);
-    expect(goesToWhatsApp(3, "Menos de $696.000 COP")).toBe(true);
-    expect(goesToWhatsApp(5, "Menos de $890.400 COP")).toBe(true);
-  });
-
-  it("la segunda y tercera opción siempre van a WhatsApp", () => {
-    expect(goesToWhatsApp(1, "Entre $358.800 y $599.999 COP")).toBe(true);
-    expect(goesToWhatsApp(1, "$600.000 COP o más")).toBe(true);
-    expect(goesToWhatsApp(2, "Entre $534.000 y $893.999 COP")).toBe(true);
-    expect(goesToWhatsApp(2, "$894.000 COP o más")).toBe(true);
-    expect(goesToWhatsApp(3, "Entre $696.000 y $1.193.999 COP")).toBe(true);
-    expect(goesToWhatsApp(3, "$1.194.000 COP o más")).toBe(true);
-    expect(goesToWhatsApp(5, "Entre $890.400 y $1.499.999 COP")).toBe(true);
-    expect(goesToWhatsApp(5, "$1.500.000 COP o más")).toBe(true);
-  });
-
-  it("la cotización personalizada de 4 días va a WhatsApp", () => {
-    expect(goesToWhatsApp(4, CUSTOM_QUOTE)).toBe(true);
+describe("Rangos de inversión según los días al mes", () => {
+  it("4 días", () => expect(investmentOptionsFor(4)).toEqual(["Entre $358.800 - $462.000", "Entre $462.000 - $564.000", "$564.000 o Más"]));
+  it("8 días", () => expect(investmentOptionsFor(8)).toEqual(["Entre $534.000 - $687.600", "Entre $687.600 - $840.000", "$840.000 o más"]));
+  it("12 días", () => expect(investmentOptionsFor(12)).toEqual(["Entre $696.000 - $898.800", "Entre $898.000 - $1.098.000", "$1.098.000 o Más"]));
+  it("20 días", () => expect(investmentOptionsFor(20)).toEqual(["Menos de $890.400 COP", "Entre $890.400 y $1.499.999 COP", "$1.500.000 COP o más"]));
+  it("ya no existen 1, 2, 3 ni 5 días", () => {
+    for (const d of [1, 2, 3, 5]) expect(investmentOptionsFor(d)).toEqual([]);
   });
 });
 
-describe("Validación de la consulta", () => {
-  it("acepta una consulta completa", () => {
-    const parsed = leadInputSchema.parse({
-      petName: "Max",
-      daysPerWeek: 3,
-      investmentRange: "Entre $696.000 y $1.193.999 COP",
-    });
-    expect(parsed.petName).toBe("Max");
+describe("Rutas y validación", () => {
+  it("todas las opciones van a WhatsApp", () => {
+    for (const d of DAY_OPTIONS) for (const r of investmentOptionsFor(d)) expect(goesToWhatsApp(d, r)).toBe(true);
   });
-
-  it("rechaza un rango que no corresponde a los días elegidos", () => {
-    expect(
-      leadInputSchema.safeParse({ petName: "Max", daysPerWeek: 1, investmentRange: "Menos de $696.000 COP" }).success,
-    ).toBe(false);
+  it("acepta consulta completa", () => {
+    expect(leadInputSchema.safeParse({ petName: "Max", daysPerWeek: 12, investmentRange: "$1.098.000 o Más" }).success).toBe(true);
   });
-
-  it("rechaza rangos inventados y nombre vacío", () => {
-    expect(
-      leadInputSchema.safeParse({ petName: "Max", daysPerWeek: 2, investmentRange: "Menos de $100.000 COP" }).success,
-    ).toBe(false);
-    expect(
-      leadInputSchema.safeParse({ petName: "  ", daysPerWeek: 2, investmentRange: "Menos de $534.000 COP" }).success,
-    ).toBe(false);
+  it("rechaza días fuera de las opciones", () => {
+    expect(leadInputSchema.safeParse({ petName: "Max", daysPerWeek: 5, investmentRange: "Menos de $890.400 COP" }).success).toBe(false);
   });
-});
-
-describe("Mensaje de WhatsApp", () => {
-  it("incluye nombre, días y rango de inversión con redacción natural", () => {
-    const url = whatsappUrl({ petName: "Luna", daysPerWeek: 3, investmentRange: "Entre $696.000 y $1.193.999 COP" });
-    const msg = decodeURIComponent(url);
-
-    expect(url.startsWith("https://wa.me/573503818555?text=")).toBe(true);
-    expect(msg).toContain("mi peludito Luna");
-    expect(msg).toContain("asistiera 3 días por semana");
-    expect(msg).toContain("inversión mensual de Entre $696.000 y $1.193.999 COP");
+  it("rechaza rango que no corresponde a los días", () => {
+    expect(leadInputSchema.safeParse({ petName: "Max", daysPerWeek: 4, investmentRange: "$840.000 o más" }).success).toBe(false);
   });
-
-  it("la cotización personalizada de 4 días pide cotización, sin precios", () => {
-    const msg = decodeURIComponent(whatsappUrl({ petName: "Max", daysPerWeek: 4, investmentRange: CUSTOM_QUOTE }));
-
-    expect(msg).toContain("asistiera 4 días por semana");
-    expect(msg).toContain("cotización personalizada");
-    expect(msg).not.toContain("$");
-  });
-
-  it("usa 'día' en singular para 1 día", () => {
-    const msg = decodeURIComponent(whatsappUrl({ petName: "Max", daysPerWeek: 1, investmentRange: "$600.000 COP o más" }));
-    expect(msg).toContain("asistiera 1 día por semana");
+  it("mensaje de WhatsApp dice días al mes", () => {
+    const url = whatsappUrl({ petName: "Luna", daysPerWeek: 8, investmentRange: "$840.000 o más" });
+    expect(decodeURIComponent(url)).toContain("8 días al mes");
   });
 });
