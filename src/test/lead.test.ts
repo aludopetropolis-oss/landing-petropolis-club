@@ -41,11 +41,11 @@ describe("Rangos de inversión según los días a la semana", () => {
 });
 
 describe("Rutas del formulario", () => {
-  it("la primera opción de 1, 2, 3 y 5 días NO va a WhatsApp (pendiente de contacto)", () => {
-    expect(goesToWhatsApp(1, "Menos de $358.800 COP")).toBe(false);
-    expect(goesToWhatsApp(2, "Menos de $534.000 COP")).toBe(false);
-    expect(goesToWhatsApp(3, "Menos de $696.000 COP")).toBe(false);
-    expect(goesToWhatsApp(5, "Menos de $890.400 COP")).toBe(false);
+  it("la primera opción de 1, 2, 3 y 5 días también va a WhatsApp", () => {
+    expect(goesToWhatsApp(1, "Menos de $358.800 COP")).toBe(true);
+    expect(goesToWhatsApp(2, "Menos de $534.000 COP")).toBe(true);
+    expect(goesToWhatsApp(3, "Menos de $696.000 COP")).toBe(true);
+    expect(goesToWhatsApp(5, "Menos de $890.400 COP")).toBe(true);
   });
 
   it("la segunda y tercera opción siempre van a WhatsApp", () => {
