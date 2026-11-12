@@ -115,7 +115,7 @@ function Index() {
             >
               <div className="rounded-3xl bg-card p-4 shadow-sm sm:p-6">
                 <p className="text-center text-5xl font-black text-primary sm:text-6xl">{days}<span className="ml-2 text-lg text-ink sm:text-xl">días al mes</span></p>
-                <input type="range" min={0} max={DAY_OPTIONS.length - 1} step={1} value={DAY_OPTIONS.indexOf(days as (typeof DAY_OPTIONS)[number])} onChange={(e) => changeDays(DAY_OPTIONS[Number(e.target.value)])} className="range-brand mt-4 w-full sm:mt-6" aria-label="Días al mes" />
+                <input type="range" min={0} max={DAY_OPTIONS.length - 1} step={1} value={DAY_OPTIONS.indexOf(days as (typeof DAY_OPTIONS)[number])} onChange={(e) => changeDays(DAY_OPTIONS[Number(e.target.value)] ?? 8)} className="range-brand mt-4 w-full sm:mt-6" aria-label="Días al mes" />
                 <div className="mt-2 flex justify-between text-sm font-bold text-muted-foreground">
                   {DAY_OPTIONS.map((d) => <span key={d}>{d}</span>)}
                 </div>
