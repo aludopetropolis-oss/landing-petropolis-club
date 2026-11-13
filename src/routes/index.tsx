@@ -87,7 +87,7 @@ function Index() {
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <img src={logoUrl} alt="Petropolis Club" width={72} height={72} className="h-11 w-11 shrink-0 floaty sm:h-16 sm:w-16" fetchPriority="high" />
-            <span className="truncate text-sm font-black text-ink sm:text-base">Petropolis Club</span>
+            <span className="truncate text-sm font-black text-ink sm:text-base">PETropolis Club</span>
           </div>
         </header>
 
