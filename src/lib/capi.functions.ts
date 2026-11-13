@@ -9,6 +9,18 @@ const input = z.object({
   eventSourceUrl: z.string().url().max(500),
   fbp: z.string().max(200).optional(),
   fbc: z.string().max(300).optional(),
+  // Opcional: parámetros del Lead (los usa /hospedaje; /colegio no los envía). Sin datos personales.
+  customData: z
+    .object({
+      content_name: z.string().max(50),
+      currency: z.string().length(3),
+      value: z.number().nonnegative().max(100_000_000),
+      fecha_entrada: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      noches: z.number().int().min(1).max(365),
+      rango_presupuesto: z.string().max(60),
+    })
+    .strict()
+    .optional(),
 });
 
 // Envía el evento Lead a Meta Conversions API (servidor). Sin datos personales.
@@ -35,6 +47,7 @@ export const sendCapiLead = createServerFn({ method: "POST" })
           action_source: "website",
           event_source_url: data.eventSourceUrl,
           user_data: { client_ip_address: ip, client_user_agent: ua, fbp: data.fbp, fbc: data.fbc },
+          ...(data.customData ? { custom_data: data.customData } : {}),
         },
       ],
     };

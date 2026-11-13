@@ -31,10 +31,19 @@ export function initPixel() {
 
 export type PixelEvent = "PageView" | "ViewContent" | "Lead" | "Contact";
 
-export function track(event: PixelEvent, eventId?: string) {
+export type PixelParams = Record<string, string | number>;
+
+export function track(event: PixelEvent, eventId?: string, params: PixelParams = {}) {
   if (!PIXEL_ID || typeof window === "undefined" || !window.fbq) return;
-  if (eventId) window.fbq("track", event, {}, { eventID: eventId });
+  if (eventId) window.fbq("track", event, params, { eventID: eventId });
+  else if (Object.keys(params).length) window.fbq("track", event, params);
   else window.fbq("track", event);
+}
+
+// Evento personalizado (no estándar), p. ej. "FormularioCompletado". Solo navegador.
+export function trackCustom(name: string, params: PixelParams = {}) {
+  if (!PIXEL_ID || typeof window === "undefined" || !window.fbq) return;
+  window.fbq("trackCustom", name, params);
 }
 
 export function readCookie(name: string): string | undefined {
